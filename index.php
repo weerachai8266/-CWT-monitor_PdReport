@@ -278,6 +278,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
 
             <!-- Target -->
             <div class="tab-pane fade" id="target" role="tabpanel">
+                <!-- Target Card -->
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-success text-white">
                     🎯 Target (Pcs / Hr)
@@ -292,27 +293,27 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="row g-3">
                                 <div class="col-md-2">
                                     <label class="form-label">F/C</label>
-                                    <input type="number" name="tar-fc" class="form-control mb-2" value="<?= $row['fc'] ?>" required>
+                                    <input type="number" step="0.1" name="tar-fc" class="form-control mb-2" value="<?= $row['fc'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">F/B</label>
-                                    <input type="number" name="tar-fb" class="form-control" value="<?= $row['fb'] ?>" required>
+                                    <input type="number" step="0.1" name="tar-fb" class="form-control" value="<?= $row['fb'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">R/C</label>
-                                    <input type="number" name="tar-rc" class="form-control" value="<?= $row['rc'] ?>" required>
+                                    <input type="number" step="0.1" name="tar-rc" class="form-control" value="<?= $row['rc'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">R/B</label>
-                                    <input type="number" name="tar-rb" class="form-control" value="<?= $row['rb'] ?>" required>
+                                    <input type="number" step="0.1" name="tar-rb" class="form-control" value="<?= $row['rb'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">3RD & ARM</label>
-                                    <input type="number" name="tar-3rd" class="form-control" value="<?= $row['3rd'] ?>" required>
+                                    <input type="number" step="0.1" name="tar-3rd" class="form-control" value="<?= $row['3rd'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">SUB</label>
-                                    <input type="number" name="tar-sub" class="form-control" value="<?= $row['subass'] ?>" required>
+                                    <input type="number" step="0.1" name="tar-sub" class="form-control" value="<?= $row['subass'] ?>" required>
                                 </div>
 
                                 <div class="col-12 text-end">
@@ -322,7 +323,54 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <?php endforeach; ?>
                         </form>      
                     </div>
-                </div>
+                </div> <!-- End of Target Card -->
+
+                <!-- productivity plan -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                    🎯 Productivity Plan
+                    </div>
+                    <div class="card-body">
+
+                        <form method="post" action="process/add_product_p.php">
+                            <?php 
+                            $stmt = $conn->query("SELECT * FROM sewing_productivity_plan ORDER BY id DESC LIMIT 1");
+                            foreach ($stmt as $row): ?>
+
+                            <div class="row g-3">
+                                <div class="col-md-2">
+                                    <label class="form-label">F/C</label>
+                                    <input type="number" name="product-fc" class="form-control mb-2" value="<?= $row['fc'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">F/B</label>
+                                    <input type="number" name="product-fb" class="form-control" value="<?= $row['fb'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">R/C</label>
+                                    <input type="number" name="product-rc" class="form-control" value="<?= $row['rc'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">R/B</label>
+                                    <input type="number" name="product-rb" class="form-control" value="<?= $row['rb'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">3RD & ARM</label>
+                                    <input type="number" name="product-3rd" class="form-control" value="<?= $row['3rd'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">SUB</label>
+                                    <input type="number" name="product-sub" class="form-control" value="<?= $row['subass'] ?>" required>
+                                </div>
+
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-success mt-3">💾 บันทึกข้อมูล</button>
+                                </div>                                
+                            </div>
+                            <?php endforeach; ?>
+                        </form>      
+                    </div>
+                </div> <!-- End of Productivity Plan -->
             </div> <!-- End of Target -->
 
             <!-- Report -->
