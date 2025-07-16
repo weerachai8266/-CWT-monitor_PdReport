@@ -5,6 +5,7 @@ include(__DIR__ . "/../connect.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
+    $shift = !empty($_POST['shift']) ? $_POST['shift'] : 'Day';
     $man_fc_act = $_POST['fc_act'];
     $man_fb_act = $_POST['fb_act'];
     $man_rc_act = $_POST['rc_act'];
@@ -14,15 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // อัปเดตข้อมูล
     $stmt = $conn->prepare("UPDATE sewing_aman SET
-        fc_act = ?, 
-        fb_act = ?, 
-        rc_act = ?, 
-        rb_act = ?, 
-        3rd_act = ?, 
+        shift = ?,
+        fc_act = ?,
+        fb_act = ?,
+        rc_act = ?,
+        rb_act = ?,
+        3rd_act = ?,
         subass_act = ?
         WHERE id = ?");
         
     $stmt->execute([
+        $shift,
         $man_fc_act,
         $man_fb_act,
         $man_rc_act,

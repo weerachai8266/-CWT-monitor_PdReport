@@ -94,6 +94,14 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             foreach ($stmt as $row): 
                             ?>
                             <div class="row g-3">
+                                <!-- <div class="col-md-2">
+                                    <label class="form-label">Shift</label>
+                                    <select name="man-shift" class="form-select" required>
+                                        <option value="<?= $row['shift'] ?>" disabled selected><?= $row['shift'] ?></option>
+                                        <option value="Day">Day</option>
+                                        <option value="Night">Night</option>
+                                    </select>
+                                </div> -->
                                 <div class="col-md-2">
                                     <label class="form-label">F/C</label>
                                     <input type="number" name="man-fc" class="form-control" value="<?= $row['fc_act'] ?>" required>
@@ -134,6 +142,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                     <thead class="bg-blue-100">
                                     <tr>
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">DATE</th>
+                                        <!-- <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Shift</th> -->
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">F/C</th>
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">F/B</th>
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">R/C</th>
@@ -153,6 +162,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 ?>
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['created_at']) ?></td>
+                                    <!-- <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['shift']) ?></td> -->
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['fc_act']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['fb_act']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['rc_act']) ?></td>
@@ -177,6 +187,12 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
+                                                    <!-- <label class="form-label">shift</label>
+                                                    <select name="shift" class="form-select mb-2" required>
+                                                        <option value="<?= $row['shift'] ?>" disabled selected><?= $row['shift'] ?></option>
+                                                        <option value="Day">Day</option>
+                                                        <option value="Night">Night</option>
+                                                    </select> -->
                                                     <label class="form-label">F/C</label>
                                                     <input name="fc_act" class="form-control mb-2" value="<?= $row['fc_act'] ?>" required>
                                                     <label class="form-label">F/B</label>
