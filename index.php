@@ -14,10 +14,13 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
     <!-- <link rel="shortcut icon" href="https://cdn.dinoq.com/datafilerepo/greenpower/greenpowerlogo.ico" type="image/x-icon"> -->
     <link rel="icon" href="img/favicon_circular.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -104,8 +107,16 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
     <!-- jQuery (kept for existing JS logic) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- เพิ่ม Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+
 </head>
-<body class="bg-light">
+<body class="bg-light" style="background-color: #f3f4f6 !important;">
     <div class="container mt-4">
 
         <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
@@ -658,7 +669,6 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 </div>
                             </div>
                         </div>  <!-- End of Summary Statistics -->
-
                        
                     </div>
                 </div> <!-- End of Report Card -->
