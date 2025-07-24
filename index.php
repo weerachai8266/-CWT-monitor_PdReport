@@ -45,6 +45,59 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
         .overflow-x-auto::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        .line-card {
+            border-left: 4px solid #007bff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .line-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .line-card.fc { border-left-color: #28a745; }
+        .line-card.fb { border-left-color: #ffc107; }
+        .line-card.rc { border-left-color: #dc3545; }
+        .line-card.rb { border-left-color: #6f42c1; }
+        .line-card.third { border-left-color: #fd7e14; }
+        .line-card.sub { border-left-color: #20c997; }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-weight: 400;
+        }
+
+        .input-group-text {
+            border-radius: 8px 0 0 8px;
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+            font-weight: 500;
+        }
     </style>
     <!-- SweetAlert2 for notifications -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -291,55 +344,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                         </div> <!-- End of Table -->                      
                     </div>
                 </div> <!-- End of MAN ACT -->
-
-                <!-- MAN PLAN -->
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-info text-white">
-                    🧑‍🤝‍🧑 Man Power PLAN
-                    </div>
-                    <div class="card-body">
-
-                        <form method="post" action="process/add_pman.php">
-                            <?php 
-                            $stmt = $conn->query("SELECT * FROM sewing_pman ORDER BY id DESC LIMIT 1");
-                            foreach ($stmt as $row): 
-                            ?>
-
-                            <div class="row g-3">
-                                <div class="col-md-2">
-                                    <label class="form-label">F/C</label>
-                                    <input type="number" name="pman-fc" class="form-control mb-2" value="<?= $row['fc_plan'] ?>" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">F/B</label>
-                                    <input type="number" name="pman-fb" class="form-control" value="<?= $row['fb_plan'] ?>" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">R/C</label>
-                                    <input type="number" name="pman-rc" class="form-control" value="<?= $row['rc_plan'] ?>" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">R/B</label>
-                                    <input type="number" name="pman-rb" class="form-control" value="<?= $row['rb_plan'] ?>" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">3RD</label>
-                                    <input type="number" name="pman-3rd" class="form-control" value="<?= $row['3rd_plan'] ?>" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">SUB</label>
-                                    <input type="number" name="pman-sub" class="form-control" value="<?= $row['subass_plan'] ?>" required>
-                                </div>
-
-                                <div class="col-12 text-end">
-                                    <button type="submit" class="btn btn-success mt-3">💾 บันทึกข้อมูล</button>
-                                </div>                                
-                            </div>
-                            <?php endforeach; ?>
-                        </form>      
-                    </div>
-                </div> <!-- End of MAN PLAN -->
-
+                
             </div> <!-- End of MAN POWER -->
 
             <!-- Target -->
@@ -437,20 +442,481 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                         </form>      
                     </div>
                 </div> <!-- End of Productivity Plan -->
+
+                <!-- MAN PLAN -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                    🧑‍🤝‍🧑 Man Power PLAN
+                    </div>
+                    <div class="card-body">
+
+                        <form method="post" action="process/add_pman.php">
+                            <?php 
+                            $stmt = $conn->query("SELECT * FROM sewing_pman ORDER BY id DESC LIMIT 1");
+                            foreach ($stmt as $row): 
+                            ?>
+
+                            <div class="row g-3">
+                                <div class="col-md-2">
+                                    <label class="form-label">F/C</label>
+                                    <input type="number" name="pman-fc" class="form-control mb-2" value="<?= $row['fc_plan'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">F/B</label>
+                                    <input type="number" name="pman-fb" class="form-control" value="<?= $row['fb_plan'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">R/C</label>
+                                    <input type="number" name="pman-rc" class="form-control" value="<?= $row['rc_plan'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">R/B</label>
+                                    <input type="number" name="pman-rb" class="form-control" value="<?= $row['rb_plan'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">3RD</label>
+                                    <input type="number" name="pman-3rd" class="form-control" value="<?= $row['3rd_plan'] ?>" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">SUB</label>
+                                    <input type="number" name="pman-sub" class="form-control" value="<?= $row['subass_plan'] ?>" required>
+                                </div>
+
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-success mt-3">💾 บันทึกข้อมูล</button>
+                                </div>                                
+                            </div>
+                            <?php endforeach; ?>
+                        </form>      
+                    </div>
+                </div> <!-- End of MAN PLAN -->
+
             </div> <!-- End of Target -->
 
             <!-- Report -->
             <div class="tab-pane fade" id="report_data" role="tabpanel">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-primary text-white">
-                    📊 Report
+                        📊 Report
                     </div>
                     <div class="card-body">
-                        <p>รายงานข้อมูลการผลิต</p>
+                        <!-- Report Filter -->
+                        <div class="row" id="report-filter-form">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <label class="input-group-text">วันที่</label>
+                                    <input class="form-control" type="date" id="report_date_start" value="<?= date('Y-m-d') ?>">
+                                    <input class="form-control" type="date" id="report_date_end" value="<?= date('Y-m-d') ?>">
+                                </div>    
+                            </div>  
+                            <div class="col-md-3">
+                                <label class="form-label"></label>
+                            </div>
+
+                            <div class="col-md-5 d-flex justify-content-end gap-3 align-items-start">
+                                <button id="btnFilter" class="btn btn-primary">ตกลง</button>
+                                <a id="btnExport" href="#" class="btn btn-success">Excel</a>
+                            </div>
+                        </div>  <!-- End of Report Filter -->
+
+                        <hr class="my-4">
+
+                        <!-- Charts Section -->
+                        <div class="row">
+                            <!-- Line F/C -->
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card line-card fc">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="mb-0">📈 Line F/C - ผลิตเสื้อหน้า</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="chartFC"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Line F/B -->
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card line-card fb">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="mb-0">📈 Line F/B - ผลิตเสื้อหลัง</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="chartFB"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Line R/C -->
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card line-card rc">
+                                    <div class="card-header bg-danger text-white">
+                                        <h6 class="mb-0">📈 Line R/C - ซ่อมหน้า</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="chartRC"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Line R/B -->
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card line-card rb">
+                                    <div class="card-header" style="background-color: #6f42c1; color: white;">
+                                        <h6 class="mb-0">📈 Line R/B - ซ่อมหลัง</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="chartRB"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Line 3RD -->
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card line-card third">
+                                    <div class="card-header" style="background-color: #fd7e14; color: white;">
+                                        <h6 class="mb-0">📈 Line 3RD - งานพิเศษ</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="chart3RD"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Line Sub -->
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card line-card sub">
+                                    <div class="card-header" style="background-color: #20c997; color: white;">
+                                        <h6 class="mb-0">📈 Line Sub - งานรับเหมา</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="chartSub"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- End of Charts Row -->
+
+                        <!-- Summary Statistics -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0">📋 สรุปผลรวม</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row text-center">
+                                            <div class="col-md-2">
+                                                <div class="border rounded p-3">
+                                                    <h5 class="text-success" id="totalFC">0</h5>
+                                                    <small>F/C ชิ้น</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="border rounded p-3">
+                                                    <h5 class="text-warning" id="totalFB">0</h5>
+                                                    <small>F/B ชิ้น</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="border rounded p-3">
+                                                    <h5 class="text-danger" id="totalRC">0</h5>
+                                                    <small>R/C ชิ้น</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="border rounded p-3">
+                                                    <h5 style="color: #6f42c1;" id="totalRB">0</h5>
+                                                    <small>R/B ชิ้น</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="border rounded p-3">
+                                                    <h5 style="color: #fd7e14;" id="total3RD">0</h5>
+                                                    <small>3RD ชิ้น</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="border rounded p-3">
+                                                    <h5 style="color: #20c997;" id="totalSub">0</h5>
+                                                    <small>Sub ชิ้น</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  <!-- End of Summary Statistics -->
+
+                       
                     </div>
                 </div> <!-- End of Report Card -->
+            </div> <!-- End of Report -->
 
         </div> <!-- End of Tab Content -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let charts = {};
+        let currentData = {};
+        let updateInterval;
+
+        // API Configuration
+        const API_BASE = 'api/get_report_data.php';
+        
+        // Chart colors configuration
+        const CHART_COLORS = {
+            fc: '#28a745',
+            fb: '#ffc107', 
+            rc: '#dc3545',
+            rb: '#6f42c1',
+            third: '#fd7e14',
+            sub: '#20c997'
+        };
+
+        // Line names in Thai
+        const LINE_NAMES = {
+            fc: 'F/C ชิ้น',
+            fb: 'F/B ชิ้น',
+            rc: 'R/C ชิ้น', 
+            rb: 'R/B ชิ้น',
+            third: '3RD ชิ้น',
+            sub: 'Sub ชิ้น'
+        };
+
+        // Set default dates to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('report_date_start').value = today;
+        document.getElementById('report_date_end').value = today;
+
+        // API Functions
+        async function fetchReportData(type = 'hourly') {
+            const startDate = document.getElementById('report_date_start').value;
+            const endDate = document.getElementById('report_date_end').value;
+            
+            try {
+                showLoading(true);
+                hideError();
+                
+                const response = await fetch(`${API_BASE}?type=${type}&start_date=${startDate}&end_date=${endDate}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Unknown error occurred');
+                }
+                
+                return result.data;
+                
+            } catch (error) {
+                console.error('API Error:', error);
+                showError(error.message);
+                throw error;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // UI Helper Functions
+        function showLoading(show = true) {
+            const loadingState = document.getElementById('loadingState');
+            const spinner = document.getElementById('loadingSpinner');
+            
+            if (show) {
+                loadingState.classList.remove('d-none');
+                spinner.classList.remove('d-none');
+            } else {
+                loadingState.classList.add('d-none');
+                spinner.classList.add('d-none');
+            }
+        }
+
+        function showError(message) {
+            const errorState = document.getElementById('errorState');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorMessage.textContent = message;
+            errorState.classList.remove('d-none');
+        }
+
+        function hideError() {
+            const errorState = document.getElementById('errorState');
+            errorState.classList.add('d-none');
+        }
+
+        // Chart configuration
+        const chartConfig = {
+            type: 'bar',
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 10
+                        }
+                    }
+                }
+            }
+        };
+
+        // Create charts
+        function createChart(canvasId, data, color, label) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            charts[canvasId] = new Chart(ctx, {
+                ...chartConfig,
+                data: {
+                    labels: currentData.labels || [],
+                    datasets: [{
+                        label: label,
+                        data: data || [],
+                        backgroundColor: color + '80',
+                        borderColor: color,
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }]
+                }
+            });
+        }
+
+        // Initialize all charts
+        function initializeCharts() {
+            Object.keys(CHART_COLORS).forEach(line => {
+                const canvasId = line === 'third' ? 'chart3RD' : `chart${line.toUpperCase()}`;
+                createChart(canvasId, [], CHART_COLORS[line], LINE_NAMES[line]);
+            });
+        }
+
+        // Update charts with new data
+        function updateCharts(data) {
+            currentData = data;
+            
+            Object.keys(CHART_COLORS).forEach(line => {
+                const canvasId = line === 'third' ? 'chart3RD' : `chart${line.toUpperCase()}`;
+                const chart = charts[canvasId];
+                
+                if (chart && data[line]) {
+                    chart.data.labels = data.labels || [];
+                    chart.data.datasets[0].data = data[line] || [];
+                    chart.update('none'); // Animation disabled for better performance
+                }
+            });
+        }
+
+        // Update summary totals
+        async function updateSummary() {
+            try {
+                const summaryData = await fetchReportData('summary');
+                
+                Object.keys(summaryData).forEach(line => {
+                    const elementId = line === 'third' ? 'total3RD' : `total${line.toUpperCase()}`;
+                    const element = document.getElementById(elementId);
+                    
+                    if (element && summaryData[line]) {
+                        element.textContent = summaryData[line].total_qty || 0;
+                        
+                        // Add animation effect
+                        element.style.transform = 'scale(1.1)';
+                        setTimeout(() => {
+                            element.style.transform = 'scale(1)';
+                        }, 200);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error updating summary:', error);
+            }
+        }
+
+        // Load and display report data
+        async function loadReportData() {
+            try {
+                // Load hourly data for charts
+                const hourlyData = await fetchReportData('hourly');
+                updateCharts(hourlyData);
+                
+                // Load summary data
+                await updateSummary();
+                
+                console.log('Report data loaded successfully');
+                
+            } catch (error) {
+                console.error('Error loading report data:', error);
+            }
+        }
+
+        // Real-time update function
+        function startRealTimeUpdate() {
+            const checkbox = document.getElementById('realTimeUpdate');
+            
+            if (checkbox.checked) {
+                updateInterval = setInterval(async () => {
+                    await loadReportData();
+                    console.log('Real-time update completed');
+                }, 30000); // Update every 30 seconds
+            } else {
+                if (updateInterval) {
+                    clearInterval(updateInterval);
+                }
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('btnFilter').addEventListener('click', async function() {
+            await loadReportData();
+        });
+
+        document.getElementById('btnExport').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const startDate = document.getElementById('report_date_start').value;
+            const endDate = document.getElementById('report_date_end').value;
+            
+            // Open export URL in new window
+            const exportUrl = `api/export_excel.php?start_date=${startDate}&end_date=${endDate}`;
+            window.open(exportUrl, '_blank');
+        });
+
+        document.getElementById('realTimeUpdate').addEventListener('change', function() {
+            startRealTimeUpdate();
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize empty charts first
+            initializeCharts();
+            
+            // Load initial data
+            await loadReportData();
+            
+            // Start real-time updates if enabled
+            startRealTimeUpdate();
+            
+            console.log('Sewing report system initialized');
+        });
+    </script>
     
 </body>
 </html>
