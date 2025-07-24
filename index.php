@@ -94,6 +94,24 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             foreach ($stmt as $row): 
                             ?>
                             <div class="row g-3">
+                                <div class="col-md-2">
+                                    <label class="form-label">ช่วงเวลา</label>
+                                    <select name="man-shift" class="form-select" required>
+                                        <option value="" disabled selected>เลือก</option>
+                                        <option value="เช้า">เช้า</option>
+                                        <option value="บ่าย">บ่าย</option>
+                                        <option value="OT">OT</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">ชั่วโมงทำงาน</label>
+                                    <input type="text" name="man-hour" class="form-control" required>
+                                </div>
+                            </div>
+                            <br>
+                            <hr>
+
+                            <div class="row g-3 mt-1">
                                 <!-- <div class="col-md-2">
                                     <label class="form-label">Shift</label>
                                     <select name="man-shift" class="form-select" required>
@@ -102,6 +120,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                         <option value="Night">Night</option>
                                     </select>
                                 </div> -->
+                                
                                 <div class="col-md-2">
                                     <label class="form-label">F/C</label>
                                     <input type="number" name="man-fc" class="form-control" value="<?= $row['fc_act'] ?>" required>
@@ -119,7 +138,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                     <input type="number" name="man-rb" class="form-control" value="<?= $row['rb_act'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">3RD & ARM</label>
+                                    <label class="form-label">3RD</label>
                                     <input type="number" name="man-3rd" class="form-control" value="<?= $row['3rd_act'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
@@ -143,6 +162,8 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                     <tr>
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">DATE</th>
                                         <!-- <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Shift</th> -->
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ช่วงเวลา</th>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Hour</th>
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">F/C</th>
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">F/B</th>
                                         <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">R/C</th>
@@ -155,14 +176,15 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
 
                                 <tbody class="bg-white divide-y divide-gray-200">
                                 <?php 
-                                    $stmt = $conn->query("SELECT * FROM sewing_aman ORDER BY id DESC LIMIT 7");
+                                    $stmt = $conn->query("SELECT * FROM sewing_aman where date(created_at) = CURDATE() ORDER BY id DESC"); // แสดงเฉพาะข้อมูลที่มีวันที่ตรงกับวันนี้
                                     // $total_license = $stmt->rowCount();
                                     // $i = $total_license;                        
                                     foreach ($stmt as $row): 
                                 ?>
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['created_at']) ?></td>
-                                    <!-- <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['shift']) ?></td> -->
+                                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['shift']) ?></td>
+                                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['thour']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['fc_act']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['fb_act']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['rc_act']) ?></td>
@@ -187,24 +209,52 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <!-- <label class="form-label">shift</label>
-                                                    <select name="shift" class="form-select mb-2" required>
-                                                        <option value="<?= $row['shift'] ?>" disabled selected><?= $row['shift'] ?></option>
-                                                        <option value="Day">Day</option>
-                                                        <option value="Night">Night</option>
-                                                    </select> -->
-                                                    <label class="form-label">F/C</label>
-                                                    <input name="fc_act" class="form-control mb-2" value="<?= $row['fc_act'] ?>" required>
-                                                    <label class="form-label">F/B</label>
-                                                    <input name="fb_act" class="form-control mb-2" value="<?= $row['fb_act'] ?>" required>
-                                                    <label class="form-label">R/C</label>
-                                                    <input name="rc_act" class="form-control mb-2" value="<?= $row['rc_act'] ?>" required>
-                                                    <label class="form-label">R/B</label>
-                                                    <input name="rb_act" class="form-control mb-2" value="<?= $row['rb_act'] ?>" required>
-                                                    <label class="form-label">3RD</label>
-                                                    <input name="3rd_act" class="form-control mb-2" value="<?= $row['3rd_act'] ?>" required>
-                                                    <label class="form-label">SUB</label>
-                                                    <input name="sub_act" class="form-control mb-2" value="<?= $row['subass_act'] ?>" required>
+                                                    <div class="row g-3 mt-1">
+                                                        <div class="col">
+                                                            <label class="form-label">shift</label>
+                                                            <select name="shift" class="form-select mb-2" required>
+                                                                <option value="<?= $row['shift'] ?>" disabled selected><?= $row['shift'] ?></option>
+                                                                <option value="เช้า">เช้า</option>
+                                                                <option value="บ่าย">บ่าย</option>
+                                                                <option value="OT">OT</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="form-label">Hour</label>
+                                                            <input name="hour" class="form-control mb-2" value="<?= $row['thour'] ?>" required>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-3 mt-1">
+                                                        <div class="col">
+                                                            <label class="form-label">F/C</label>
+                                                            <input name="fc_act" class="form-control mb-2" value="<?= $row['fc_act'] ?>" required>
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="form-label">F/B</label>
+                                                            <input name="fb_act" class="form-control mb-2" value="<?= $row['fb_act'] ?>" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-3 mt-1">
+                                                        <div class="col">
+                                                            <label class="form-label">R/C</label>
+                                                            <input name="rc_act" class="form-control mb-2" value="<?= $row['rc_act'] ?>" required>
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="form-label">R/B</label>
+                                                            <input name="rb_act" class="form-control mb-2" value="<?= $row['rb_act'] ?>" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-3 mt-1">
+                                                        <div class="col">
+                                                            <label class="form-label">3RD</label>
+                                                            <input name="3rd_act" class="form-control mb-2" value="<?= $row['3rd_act'] ?>" required>
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="form-label">SUB</label>
+                                                            <input name="sub_act" class="form-control mb-2" value="<?= $row['subass_act'] ?>" required>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="submit" class="btn btn-success">บันทึก</button>
@@ -273,7 +323,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                     <input type="number" name="pman-rb" class="form-control" value="<?= $row['rb_plan'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">3RD & ARM</label>
+                                    <label class="form-label">3RD</label>
                                     <input type="number" name="pman-3rd" class="form-control" value="<?= $row['3rd_plan'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
@@ -309,27 +359,27 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="row g-3">
                                 <div class="col-md-2">
                                     <label class="form-label">F/C</label>
-                                    <input type="number" step="0.1" name="tar-fc" class="form-control mb-2" value="<?= $row['fc'] ?>" required>
+                                    <input type="number" name="tar-fc" class="form-control mb-2" value="<?= $row['fc'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">F/B</label>
-                                    <input type="number" step="0.1" name="tar-fb" class="form-control" value="<?= $row['fb'] ?>" required>
+                                    <input type="number" name="tar-fb" class="form-control" value="<?= $row['fb'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">R/C</label>
-                                    <input type="number" step="0.1" name="tar-rc" class="form-control" value="<?= $row['rc'] ?>" required>
+                                    <input type="number" name="tar-rc" class="form-control" value="<?= $row['rc'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">R/B</label>
-                                    <input type="number" step="0.1" name="tar-rb" class="form-control" value="<?= $row['rb'] ?>" required>
+                                    <input type="number" name="tar-rb" class="form-control" value="<?= $row['rb'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">3RD & ARM</label>
-                                    <input type="number" step="0.1" name="tar-3rd" class="form-control" value="<?= $row['3rd'] ?>" required>
+                                    <label class="form-label">3RD</label>
+                                    <input type="number" name="tar-3rd" class="form-control" value="<?= $row['3rd'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">SUB</label>
-                                    <input type="number" step="0.1" name="tar-sub" class="form-control" value="<?= $row['subass'] ?>" required>
+                                    <input type="number" name="tar-sub" class="form-control" value="<?= $row['subass'] ?>" required>
                                 </div>
 
                                 <div class="col-12 text-end">
@@ -356,27 +406,27 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="row g-3">
                                 <div class="col-md-2">
                                     <label class="form-label">F/C</label>
-                                    <input type="number" name="product-fc" class="form-control mb-2" value="<?= $row['fc'] ?>" required>
+                                    <input type="text" name="product-fc" class="form-control mb-2" value="<?= $row['fc'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">F/B</label>
-                                    <input type="number" name="product-fb" class="form-control" value="<?= $row['fb'] ?>" required>
+                                    <input type="text" name="product-fb" class="form-control" value="<?= $row['fb'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">R/C</label>
-                                    <input type="number" name="product-rc" class="form-control" value="<?= $row['rc'] ?>" required>
+                                    <input type="text" name="product-rc" class="form-control" value="<?= $row['rc'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">R/B</label>
-                                    <input type="number" name="product-rb" class="form-control" value="<?= $row['rb'] ?>" required>
+                                    <input type="text" name="product-rb" class="form-control" value="<?= $row['rb'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">3RD & ARM</label>
-                                    <input type="number" name="product-3rd" class="form-control" value="<?= $row['3rd'] ?>" required>
+                                    <label class="form-label">3RD</label>
+                                    <input type="text" name="product-3rd" class="form-control" value="<?= $row['3rd'] ?>" required>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">SUB</label>
-                                    <input type="number" name="product-sub" class="form-control" value="<?= $row['subass'] ?>" required>
+                                    <input type="text" name="product-sub" class="form-control" value="<?= $row['subass'] ?>" required>
                                 </div>
 
                                 <div class="col-12 text-end">

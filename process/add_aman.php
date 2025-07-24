@@ -4,7 +4,8 @@ error_reporting(E_ALL);
 include(__DIR__ . "/../connect.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $man_shift = !empty($_POST['man-shift']) ? $_POST['man-shift'] : 'Day';
+    $man_shift = $_POST['man-shift'];
+    $man_hour = $_POST['man-hour'];
     $man_fc = $_POST['man-fc'];
     $man_fb = $_POST['man-fb'];
     $man_rc = $_POST['man-rc'];
@@ -14,10 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // เพิ่มข้อมูล
-    $stmt = $conn->prepare("INSERT INTO sewing_aman (shift, fc_act, fb_act, rc_act, rb_act, 3rd_act, subass_act)
-                            VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO sewing_aman (shift, thour, fc_act, fb_act, rc_act, rb_act, 3rd_act, subass_act)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $man_shift,
+        $man_hour,
         $man_fc,
         $man_fb,
         $man_rc,
