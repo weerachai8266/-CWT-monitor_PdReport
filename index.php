@@ -527,7 +527,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="col-lg-6 col-md-12 mb-4">
                                 <div class="card line-card fc">
                                     <div class="card-header bg-success text-white">
-                                        <h6 class="mb-0">📈 Line F/C - ผลิตเสื้อหน้า</h6>
+                                        <h6 class="mb-0">📈 Line F/C</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
@@ -541,7 +541,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="col-lg-6 col-md-12 mb-4">
                                 <div class="card line-card fb">
                                     <div class="card-header bg-warning text-dark">
-                                        <h6 class="mb-0">📈 Line F/B - ผลิตเสื้อหลัง</h6>
+                                        <h6 class="mb-0">📈 Line F/B</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
@@ -555,7 +555,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="col-lg-6 col-md-12 mb-4">
                                 <div class="card line-card rc">
                                     <div class="card-header bg-danger text-white">
-                                        <h6 class="mb-0">📈 Line R/C - ซ่อมหน้า</h6>
+                                        <h6 class="mb-0">📈 Line R/C</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
@@ -569,7 +569,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="col-lg-6 col-md-12 mb-4">
                                 <div class="card line-card rb">
                                     <div class="card-header" style="background-color: #6f42c1; color: white;">
-                                        <h6 class="mb-0">📈 Line R/B - ซ่อมหลัง</h6>
+                                        <h6 class="mb-0">📈 Line R/B</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
@@ -583,7 +583,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="col-lg-6 col-md-12 mb-4">
                                 <div class="card line-card third">
                                     <div class="card-header" style="background-color: #fd7e14; color: white;">
-                                        <h6 class="mb-0">📈 Line 3RD - งานพิเศษ</h6>
+                                        <h6 class="mb-0">📈 Line 3RD</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
@@ -597,7 +597,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <div class="col-lg-6 col-md-12 mb-4">
                                 <div class="card line-card sub">
                                     <div class="card-header" style="background-color: #20c997; color: white;">
-                                        <h6 class="mb-0">📈 Line Sub - งานรับเหมา</h6>
+                                        <h6 class="mb-0">📈 Line Sub Assy</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">

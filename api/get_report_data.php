@@ -1,10 +1,11 @@
 <?php
+// api/get_report_data.php (Updated Version)
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include 'connect.php'; // เชื่อมต่อฐานข้อมูล 
+include 'connect.php'; // เชื่อมต่อฐานข้อมูล
 
 class SewingReport {
     private $conn;
@@ -21,39 +22,112 @@ class SewingReport {
         $this->conn = $db;
     }
 
-    // ดึงข้อมูลรายชั่วโมงตามช่วงวันที่
-    public function getHourlyReport($start_date, $end_date) {
-        $result = [];
+    // ดึงช่วงเวลาการทำงานจริงจากข้อมูล
+    private function getWorkingHours($start_date, $end_date) {
+        $all_hours = [];
         
         foreach ($this->tables as $line => $table_name) {
+            // ตรวจสอบว่าตารางมีอยู่จริง
+            $check_table = "SHOW TABLES LIKE :table_name";
+            $stmt = $this->conn->prepare($check_table);
+            $stmt->bindParam(':table_name', $table_name);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() == 0) {
+                error_log("Table $table_name does not exist");
+                continue;
+            }
+
+            $query = "SELECT DISTINCT HOUR(created_at) as hour 
+                      FROM " . $table_name . " 
+                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date 
+                        AND status = 'completed'
+                      ORDER BY hour";
+            
+            try {
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(':start_date', $start_date);
+                $stmt->bindParam(':end_date', $end_date);
+                $stmt->execute();
+                
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $all_hours[] = (int)$row['hour'];
+                }
+            } catch (PDOException $e) {
+                error_log("Error querying table $table_name: " . $e->getMessage());
+            }
+        }
+        
+        // ลบ duplicate และ sort
+        $all_hours = array_unique($all_hours);
+        sort($all_hours);
+        
+        // ถ้าไม่มีข้อมูล ให้ใช้เวลามาตรฐาน
+        if (empty($all_hours)) {
+            $all_hours = range(8, 16); // 8:00-16:00 เป็นค่าเริ่มต้น
+        }
+        
+        return $all_hours;
+    }
+
+    // ดึงข้อมูลรายชั่วโมงแบบ Dynamic
+    public function getHourlyReport($start_date, $end_date) {
+        $result = [];
+        $working_hours = $this->getWorkingHours($start_date, $end_date);
+        
+        // สร้าง labels สำหรับแกน x
+        $labels = [];
+        foreach ($working_hours as $hour) {
+            $labels[] = sprintf('%02d:00', $hour);
+        }
+        $result['labels'] = $labels;
+        
+        foreach ($this->tables as $line => $table_name) {
+            // ตรวจสอบว่าตารางมีอยู่จริง
+            $check_table = "SHOW TABLES LIKE :table_name";
+            $stmt = $this->conn->prepare($check_table);
+            $stmt->bindParam(':table_name', $table_name);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() == 0) {
+                error_log("Table $table_name does not exist");
+                $result[$line] = array_fill(0, count($working_hours), 0);
+                continue;
+            }
+
             $query = "SELECT 
                         HOUR(created_at) as hour,
                         SUM(qty) as total_qty,
                         COUNT(*) as total_items
                       FROM " . $table_name . " 
-                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date
+                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date 
+                        AND status = 'completed'
                       GROUP BY HOUR(created_at) 
                       ORDER BY hour";
             
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':start_date', $start_date);
-            $stmt->bindParam(':end_date', $end_date);
-            $stmt->execute();
-            
-            $hourly_data = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $hourly_data[$row['hour']] = (int)$row['total_qty'];
-            }
-            
-            // เติมข้อมูลช่วงเวลา 8:00-16:00 ที่ไม่มีข้อมูล
-            for ($hour = 8; $hour <= 16; $hour++) {
-                if (!isset($hourly_data[$hour])) {
-                    $hourly_data[$hour] = 0;
+            try {
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(':start_date', $start_date);
+                $stmt->bindParam(':end_date', $end_date);
+                $stmt->execute();
+                
+                $hourly_data = [];
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $hourly_data[$row['hour']] = (int)$row['total_qty'];
                 }
+                
+                // จัดเรียงข้อมูลตามช่วงเวลาที่หา
+                $line_data = [];
+                foreach ($working_hours as $hour) {
+                    $line_data[] = isset($hourly_data[$hour]) ? $hourly_data[$hour] : 0;
+                }
+                
+                $result[$line] = $line_data;
+                
+            } catch (PDOException $e) {
+                error_log("Error querying $table_name: " . $e->getMessage());
+                $result[$line] = array_fill(0, count($working_hours), 0);
             }
-            ksort($hourly_data);
-            
-            $result[$line] = array_values($hourly_data);
         }
         
         return $result;
@@ -62,33 +136,65 @@ class SewingReport {
     // ดึงข้อมูลรายวันตามช่วงวันที่
     public function getDailyReport($start_date, $end_date) {
         $result = [];
+        $labels = [];
+        
+        // สร้างช่วงวันที่
+        $period = new DatePeriod(
+            new DateTime($start_date),
+            new DateInterval('P1D'),
+            new DateTime($end_date . ' +1 day')
+        );
+        
+        foreach ($period as $date) {
+            $labels[] = $date->format('d/m');
+        }
+        $result['labels'] = $labels;
         
         foreach ($this->tables as $line => $table_name) {
+            // ตรวจสอบว่าตารางมีอยู่จริง
+            $check_table = "SHOW TABLES LIKE :table_name";
+            $stmt = $this->conn->prepare($check_table);
+            $stmt->bindParam(':table_name', $table_name);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() == 0) {
+                $result[$line] = array_fill(0, count($labels), 0);
+                continue;
+            }
+
             $query = "SELECT 
                         DATE(created_at) as date,
                         SUM(qty) as total_qty,
                         COUNT(*) as total_items
                       FROM " . $table_name . " 
-                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date
+                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date 
+                        AND status = 'completed'
                       GROUP BY DATE(created_at) 
                       ORDER BY date";
             
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':start_date', $start_date);
-            $stmt->bindParam(':end_date', $end_date);
-            $stmt->execute();
-            
-            $daily_data = [];
-            $labels = [];
-            
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $daily_data[] = (int)$row['total_qty'];
-                $labels[] = date('d/m', strtotime($row['date']));
-            }
-            
-            $result[$line] = $daily_data;
-            if ($line === 'fc') { // ใช้ labels จาก fc เป็นตัวแทน
-                $result['labels'] = $labels;
+            try {
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(':start_date', $start_date);
+                $stmt->bindParam(':end_date', $end_date);
+                $stmt->execute();
+                
+                $daily_data = [];
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $daily_data[$row['date']] = (int)$row['total_qty'];
+                }
+                
+                // จัดเรียงข้อมูลตามวันที่
+                $line_data = [];
+                foreach ($period as $date) {
+                    $date_str = $date->format('Y-m-d');
+                    $line_data[] = isset($daily_data[$date_str]) ? $daily_data[$date_str] : 0;
+                }
+                
+                $result[$line] = $line_data;
+                
+            } catch (PDOException $e) {
+                error_log("Error querying $table_name: " . $e->getMessage());
+                $result[$line] = array_fill(0, count($labels), 0);
             }
         }
         
@@ -100,71 +206,124 @@ class SewingReport {
         $result = [];
         
         foreach ($this->tables as $line => $table_name) {
+            // ตรวจสอบว่าตารางมีอยู่จริง
+            $check_table = "SHOW TABLES LIKE :table_name";
+            $stmt = $this->conn->prepare($check_table);
+            $stmt->bindParam(':table_name', $table_name);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() == 0) {
+                $result[$line] = [
+                    'total_qty' => 0,
+                    'total_items' => 0,
+                    'unique_items' => 0
+                ];
+                continue;
+            }
+
             $query = "SELECT 
                         SUM(qty) as total_qty,
                         COUNT(*) as total_items,
                         COUNT(DISTINCT item) as unique_items
                       FROM " . $table_name . " 
-                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date";
+                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date 
+                        AND status = 'completed'";
             
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':start_date', $start_date);
-            $stmt->bindParam(':end_date', $end_date);
-            $stmt->execute();
-            
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $result[$line] = [
-                'total_qty' => (int)($row['total_qty'] ?? 0),
-                'total_items' => (int)($row['total_items'] ?? 0),
-                'unique_items' => (int)($row['unique_items'] ?? 0)
-            ];
+            try {
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(':start_date', $start_date);
+                $stmt->bindParam(':end_date', $end_date);
+                $stmt->execute();
+                
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $result[$line] = [
+                    'total_qty' => (int)($row['total_qty'] ?? 0),
+                    'total_items' => (int)($row['total_items'] ?? 0),
+                    'unique_items' => (int)($row['unique_items'] ?? 0)
+                ];
+                
+            } catch (PDOException $e) {
+                error_log("Error querying $table_name: " . $e->getMessage());
+                $result[$line] = [
+                    'total_qty' => 0,
+                    'total_items' => 0,
+                    'unique_items' => 0
+                ];
+            }
         }
         
         return $result;
     }
 
-    // ดึงข้อมูลรายละเอียดสำหรับ Export Excel
-    public function getDetailReport($start_date, $end_date) {
-        $result = [];
+    // Debug function - ตรวจสอบข้อมูลในตาราง
+    public function debugTableData($start_date, $end_date) {
+        $debug_info = [];
         
         foreach ($this->tables as $line => $table_name) {
-            $query = "SELECT 
-                        id,
-                        item,
-                        qty,
-                        status,
-                        created_at,
-                        DATE(created_at) as date,
-                        TIME(created_at) as time
-                      FROM " . $table_name . " 
-                      WHERE DATE(created_at) BETWEEN :start_date AND :end_date 
-                      ORDER BY created_at DESC";
-            
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':start_date', $start_date);
-            $stmt->bindParam(':end_date', $end_date);
-            $stmt->execute();
-            
-            $result[$line] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            try {
+                // ตรวจสอบว่าตารางมีอยู่จริง
+                $check_table = "SHOW TABLES LIKE :table_name";
+                $stmt = $this->conn->prepare($check_table);
+                $stmt->bindParam(':table_name', $table_name);
+                $stmt->execute();
+                
+                if ($stmt->rowCount() == 0) {
+                    $debug_info[$line] = ['error' => 'Table does not exist'];
+                    continue;
+                }
+
+                // นับจำนวนข้อมูลทั้งหมด
+                $count_query = "SELECT COUNT(*) as total FROM " . $table_name;
+                $stmt = $this->conn->prepare($count_query);
+                $stmt->execute();
+                $total_count = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+                // นับจำนวนข้อมูลในช่วงวันที่
+                $date_count_query = "SELECT COUNT(*) as date_count FROM " . $table_name . " 
+                                    WHERE DATE(created_at) BETWEEN :start_date AND :end_date";
+                $stmt = $this->conn->prepare($date_count_query);
+                $stmt->bindParam(':start_date', $start_date);
+                $stmt->bindParam(':end_date', $end_date);
+                $stmt->execute();
+                $date_count = $stmt->fetch(PDO::FETCH_ASSOC)['date_count'];
+
+                // ดูข้อมูลตัวอย่าง
+                $sample_query = "SELECT * FROM " . $table_name . " 
+                                WHERE DATE(created_at) BETWEEN :start_date AND :end_date 
+                                LIMIT 3";
+                $stmt = $this->conn->prepare($sample_query);
+                $stmt->bindParam(':start_date', $start_date);
+                $stmt->bindParam(':end_date', $end_date);
+                $stmt->execute();
+                $samples = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $debug_info[$line] = [
+                    'table_exists' => true,
+                    'total_records' => $total_count,
+                    'date_range_records' => $date_count,
+                    'sample_data' => $samples
+                ];
+
+            } catch (PDOException $e) {
+                $debug_info[$line] = ['error' => $e->getMessage()];
+            }
         }
         
-        return $result;
+        return $debug_info;
     }
 }
 
 // Handle API Requests
 try {
-    // ใช้ $conn จากไฟล์ connect.php ที่ include มาแล้ว
     $report = new SewingReport($conn);
 
     $start_date = $_GET['start_date'] ?? date('Y-m-d');
     $end_date = $_GET['end_date'] ?? date('Y-m-d');
-    $type = $_GET['type'] ?? 'hourly'; // hourly, daily, summary, detail
+    $type = $_GET['type'] ?? 'hourly';
 
     switch ($type) {
         case 'hourly':
             $data = $report->getHourlyReport($start_date, $end_date);
-            $data['labels'] = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
             break;
             
         case 'daily':
@@ -175,8 +334,8 @@ try {
             $data = $report->getSummaryReport($start_date, $end_date);
             break;
             
-        case 'detail':
-            $data = $report->getDetailReport($start_date, $end_date);
+        case 'debug':
+            $data = $report->debugTableData($start_date, $end_date);
             break;
             
         default:
@@ -195,7 +354,9 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => $e->getMessage(),
+        'line' => $e->getLine(),
+        'file' => $e->getFile()
     ]);
 }
 ?>
