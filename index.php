@@ -20,6 +20,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -102,21 +103,9 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
             font-weight: 500;
         }
     </style>
-    <!-- SweetAlert2 for notifications -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery (kept for existing JS logic) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- เพิ่ม Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    
 
 </head>
-<body class="bg-light" style="background-color: #f3f4f6 !important;">
+<body class="bg-light" style="!important;">
     <div class="container mt-4">
 
         <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
@@ -125,20 +114,19 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                 <!-- Chai Watana Tannery Group -->
             </h1>
             <div style="width: 60px;"></div>
-        <!-- </div> -->
 
-        <!-- แถบเมนู -->
-        <ul class="nav nav-pills" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="man-tab" data-bs-toggle="tab" data-bs-target="#man" type="button" role="tab">Man Power</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab">Target</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report_data" type="button" role="tab">Report</button>
-            </li>
-        </ul>
+            <!-- แถบเมนู -->
+            <ul class="nav nav-pills" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="man-tab" data-bs-toggle="tab" data-bs-target="#man" type="button" role="tab">Man Power</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab">Target</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report_data" type="button" role="tab">Report</button>
+                </li>
+            </ul>
         </div>
 
         <div class="tab-content mt-3" id="myTabContent">
@@ -511,6 +499,28 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                         📊 Report
                     </div>
                     <div class="card-body">
+                        <!-- Loading State -->
+                        <div id="loadingState" class="d-none text-center mb-3">
+                            <div id="loadingSpinner" class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="text-muted mt-2">กำลังโหลดข้อมูล...</div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorState" class="alert alert-danger d-none" role="alert">
+                            <span id="errorMessage">เกิดข้อผิดพลาด</span>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingState" class="d-none text-center my-3">
+                            <div id="loadingSpinner" class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="text-muted mt-2">กำลังโหลดข้อมูล...</div>
+                        </div>
+
+                        
                         <!-- Report Filter -->
                         <div class="row" id="report-filter-form">
                             <div class="col-md-4">
@@ -521,7 +531,10 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 </div>    
                             </div>  
                             <div class="col-md-3">
-                                <label class="form-label"></label>
+                                <div class="form-check mt-1">
+                                    <input type="checkbox" class="form-check-input" id="realTimeUpdate">
+                                    <label class="form-check-label" for="realTimeUpdate">อัปเดตอัตโนมัติทุก 30 วิ</label>
+                                </div>
                             </div>
 
                             <div class="col-md-5 d-flex justify-content-end gap-3 align-items-start">
@@ -531,7 +544,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                         </div>  <!-- End of Report Filter -->
 
                         <hr class="my-4">
-
+                        
                         <!-- Charts Section -->
                         <div class="row">
                             <!-- Line F/C -->
@@ -612,7 +625,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
-                                            <canvas id="chartSub"></canvas>
+                                            <canvas id="chartSUB"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -660,7 +673,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="border rounded p-3">
-                                                    <h5 style="color: #20c997;" id="totalSub">0</h5>
+                                                    <h5 style="color: #20c997;" id="totalSUB">0</h5>
                                                     <small>Sub ชิ้น</small>
                                                 </div>
                                             </div>
