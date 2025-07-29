@@ -13,13 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $man_sub_plan = $_POST['pman-sub'];
 
     // อัปเดตข้อมูล
-    $stmt = $conn->prepare("UPDATE sewing_pman SET
+    $stmt = $conn->prepare("UPDATE sewing_man_plan SET
         fc_plan = ?, 
         fb_plan = ?, 
         rc_plan = ?, 
         rb_plan = ?, 
         3rd_plan = ?, 
-        subass_plan = ? 
+        sub_plan = ? 
         WHERE id = ?");
         
     $stmt->execute([

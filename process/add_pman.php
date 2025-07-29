@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // เพิ่มข้อมูล
-    $stmt = $conn->prepare("INSERT INTO sewing_pman (fc_plan, fb_plan, rc_plan, rb_plan, 3rd_plan, subass_plan)
+    $stmt = $conn->prepare("INSERT INTO sewing_man_plan (fc_plan, fb_plan, rc_plan, rb_plan, 3rd_plan, sub_plan)
                             VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $man_fc,

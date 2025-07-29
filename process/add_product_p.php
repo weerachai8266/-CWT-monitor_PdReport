@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // เพิ่มข้อมูล
-    $stmt = $conn->prepare("INSERT INTO sewing_productivity_plan (fc, fb, rc, rb, 3rd, subass)
+    $stmt = $conn->prepare("INSERT INTO sewing_productivity_plan (fc, fb, rc, rb, 3rd, sub)
                             VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $tar_fc,

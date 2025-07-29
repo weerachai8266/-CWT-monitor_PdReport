@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // เพิ่มข้อมูล
-    $stmt = $conn->prepare("INSERT INTO sewing_aman (shift, thour, fc_act, fb_act, rc_act, rb_act, 3rd_act, subass_act)
+    $stmt = $conn->prepare("INSERT INTO sewing_man_act (shift, thour, fc_act, fb_act, rc_act, rb_act, 3rd_act, sub_act)
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $man_shift,

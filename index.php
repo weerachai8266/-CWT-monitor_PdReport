@@ -17,10 +17,14 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery UI -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -121,10 +125,10 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                     <button class="nav-link active" id="man-tab" data-bs-toggle="tab" data-bs-target="#man" type="button" role="tab">Man Power</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab">Target</button>
+                    <button class="nav-link" id="lot-tab" data-bs-toggle="tab" data-bs-target="#lot" type="button" role="tab">Lot</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report_data" type="button" role="tab">Report</button>
+                    <button class="nav-link" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab">Target</button>
                 </li>
             </ul>
         </div>
@@ -142,7 +146,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
 
                         <form method="post" action="process/add_aman.php">
                             <?php 
-                            $stmt = $conn->query("SELECT * FROM sewing_aman ORDER BY id DESC LIMIT 1");
+                            $stmt = $conn->query("SELECT * FROM sewing_man_act ORDER BY id DESC LIMIT 1");
                             foreach ($stmt as $row): 
                             ?>
                             <div class="row g-3">
@@ -195,7 +199,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">SUB</label>
-                                    <input type="number" name="man-sub" class="form-control" value="<?= $row['subass_act'] ?>" required>
+                                    <input type="number" name="man-sub" class="form-control" value="<?= $row['sub_act'] ?>" required>
                                 </div>
 
                                 <div class="col-12 text-end">
@@ -206,7 +210,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <?php endforeach; ?>
                         </form>
                         <!-- <br> -->
-                         <hr class="my-3 border-gray-200">
+                        <hr class="my-3 border-gray-200">
                         
                         <div class="overflow-x-auto rounded-lg shadow-md">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -228,7 +232,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
 
                                 <tbody class="bg-white divide-y divide-gray-200">
                                 <?php 
-                                    $stmt = $conn->query("SELECT * FROM sewing_aman where date(created_at) = CURDATE() ORDER BY id DESC"); // แสดงเฉพาะข้อมูลที่มีวันที่ตรงกับวันนี้
+                                    $stmt = $conn->query("SELECT * FROM sewing_man_act where date(created_at) = CURDATE() ORDER BY id DESC"); // แสดงเฉพาะข้อมูลที่มีวันที่ตรงกับวันนี้
                                     // $total_license = $stmt->rowCount();
                                     // $i = $total_license;                        
                                     foreach ($stmt as $row): 
@@ -242,7 +246,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['rc_act']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['rb_act']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['3rd_act']) ?></td>
-                                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['subass_act']) ?></td>
+                                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['sub_act']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-center text-sm font-medium">
                                         <!-- ปุ่มแก้ไข -->
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['id'] ?>">✏️</button>
@@ -304,7 +308,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                                         </div>
                                                         <div class="col">
                                                             <label class="form-label">SUB</label>
-                                                            <input name="sub_act" class="form-control mb-2" value="<?= $row['subass_act'] ?>" required>
+                                                            <input name="sub_act" class="form-control mb-2" value="<?= $row['sub_act'] ?>" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -346,6 +350,133 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                 
             </div> <!-- End of MAN POWER -->
 
+            <!-- Lot -->
+            <div class="tab-pane fade" id="lot" role="tabpanel">
+                <!-- Lot Card -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                    📦 Lot Management
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="process/add_lot.php">
+                            <div id="lot-container" class="row g-3">
+                                <div class="row lot-entry">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Lot Number</label>
+                                        <input type="text" name="lot_number[]" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Model Type</label>
+                                        <input type="text" name="lot_model[]" class="form-control model-detail" autocomplete="off" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Color</label>
+                                        <input type="text" name="lot_color[]" class="form-control color-detail" autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-3">
+                                <button type="button" class="btn btn-secondary" onclick="addLotRow()">➕ เพิ่มรายการ</button>
+                                <button type="submit" class="btn btn-primary">💾 บันทึกทั้งหมด</button>
+                            </div>
+                        </form>
+
+
+                        <!-- show lot -->
+                        <hr class="my-3 border-gray-200">
+                        
+                        <div class="overflow-x-auto rounded-lg shadow-md">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-blue-100">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Batch number</th>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Model</th>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tr-lg">EDIT</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                <?php 
+                                    $stmt = $conn->query("SELECT * FROM sewing_lot ORDER BY id DESC LIMIT 10"); // แสดงเฉพาะข้อมูลที่มีวันที่ตรงกับวันนี้
+                                    // $total_license = $stmt->rowCount();
+                                    // $i = $total_license;                        
+                                    foreach ($stmt as $row): 
+                                ?>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['lot']) ?></td>
+                                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['model']) ?></td>
+                                    <td class="px-6 py-2 whitespace-nowrap text-center text-sm font-medium">
+                                        <!-- ปุ่มแก้ไข -->
+                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['id'] ?>">✏️</button>
+                                        <!-- ปุ่มลบ -->
+                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['id'] ?>">🗑️</button>
+                                    </td>
+                                </tr>
+                                <!-- Modal แก้ไข -->
+                                <div class="modal fade" id="editModal<?= $row['id'] ?>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="post" action="process/update_lot.php">
+                                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                <div class="modal-header bg-warning">
+                                                    <h5 class="modal-title">📝 Edit man power ACT</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">                                                    
+                                                    <!-- <div class="row g-3 mt-1"> -->
+                                                        <div class="col">
+                                                            <label class="form-label">LOT</label>
+                                                            <input name="lot" class="form-control mb-2" value="<?= $row['lot'] ?>" required>
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="form-label">Model</label>
+                                                            <input name="model" class="form-control mb-2" value="<?= $row['model'] ?>" required>
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="form-label">Color</label>
+                                                            <input name="color" class="form-control mb-2" value="<?= $row['color'] ?>" required>
+                                                        </div>
+                                                    <!-- </div> -->
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">บันทึก</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal ลบ -->
+                                <div class="modal fade" id="deleteModal<?= $row['id'] ?>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="post" action="process/delete_lot.php">
+                                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title">ยืนยันการลบ</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                <div class="modal-body">
+                                                คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลคนวันที่  <strong><?= $row['created_at'] ?></strong> ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-danger">ลบข้อมูล</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div> <!-- End of Table -->  
+
+                    </div>
+                </div> <!-- End of Lot Card -->
+            </div> <!-- End of Lot -->
+
             <!-- Target -->
             <div class="tab-pane fade" id="target" role="tabpanel">
                 <!-- Target Card -->
@@ -383,7 +514,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">SUB</label>
-                                    <input type="number" name="tar-sub" class="form-control" value="<?= $row['subass'] ?>" required>
+                                    <input type="number" name="tar-sub" class="form-control" value="<?= $row['sub'] ?>" required>
                                 </div>
 
                                 <div class="col-12 text-end">
@@ -430,7 +561,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">SUB</label>
-                                    <input type="text" name="product-sub" class="form-control" value="<?= $row['subass'] ?>" required>
+                                    <input type="text" name="product-sub" class="form-control" value="<?= $row['sub'] ?>" required>
                                 </div>
 
                                 <div class="col-12 text-end">
@@ -451,7 +582,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
 
                         <form method="post" action="process/add_pman.php">
                             <?php 
-                            $stmt = $conn->query("SELECT * FROM sewing_pman ORDER BY id DESC LIMIT 1");
+                            $stmt = $conn->query("SELECT * FROM sewing_man_plan ORDER BY id DESC LIMIT 1");
                             foreach ($stmt as $row): 
                             ?>
 
@@ -478,7 +609,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">SUB</label>
-                                    <input type="number" name="pman-sub" class="form-control" value="<?= $row['subass_plan'] ?>" required>
+                                    <input type="number" name="pman-sub" class="form-control" value="<?= $row['sub_plan'] ?>" required>
                                 </div>
 
                                 <div class="col-12 text-end">
@@ -489,457 +620,55 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                         </form>      
                     </div>
                 </div> <!-- End of MAN PLAN -->
-
             </div> <!-- End of Target -->
-
-            <!-- Report -->
-            <div class="tab-pane fade" id="report_data" role="tabpanel">
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        📊 Report
-                    </div>
-                    <div class="card-body">
-                        <!-- Loading State -->
-                        <div id="loadingState" class="d-none text-center mb-3">
-                            <div id="loadingSpinner" class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div class="text-muted mt-2">กำลังโหลดข้อมูล...</div>
-                        </div>
-
-                        <!-- Error Message -->
-                        <div id="errorState" class="alert alert-danger d-none" role="alert">
-                            <span id="errorMessage">เกิดข้อผิดพลาด</span>
-                        </div>
-
-                        <!-- Loading Spinner -->
-                        <div id="loadingState" class="d-none text-center my-3">
-                            <div id="loadingSpinner" class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <div class="text-muted mt-2">กำลังโหลดข้อมูล...</div>
-                        </div>
-
-                        
-                        <!-- Report Filter -->
-                        <div class="row" id="report-filter-form">
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <label class="input-group-text">วันที่</label>
-                                    <input class="form-control" type="date" id="report_date_start" value="<?= date('Y-m-d') ?>">
-                                    <input class="form-control" type="date" id="report_date_end" value="<?= date('Y-m-d') ?>">
-                                </div>    
-                            </div>  
-                            <div class="col-md-3">
-                                <div class="form-check mt-1">
-                                    <input type="checkbox" class="form-check-input" id="realTimeUpdate">
-                                    <label class="form-check-label" for="realTimeUpdate">อัปเดตอัตโนมัติทุก 30 วิ</label>
-                                </div>
-                            </div>
-
-                            <div class="col-md-5 d-flex justify-content-end gap-3 align-items-start">
-                                <button id="btnFilter" class="btn btn-primary">ตกลง</button>
-                                <a id="btnExport" href="#" class="btn btn-success">Excel</a>
-                            </div>
-                        </div>  <!-- End of Report Filter -->
-
-                        <hr class="my-4">
-                        
-                        <!-- Charts Section -->
-                        <div class="row">
-                            <!-- Line F/C -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card line-card fc">
-                                    <div class="card-header bg-success text-white">
-                                        <h6 class="mb-0">📈 Line F/C</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-container">
-                                            <canvas id="chartFC"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Line F/B -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card line-card fb">
-                                    <div class="card-header bg-warning text-dark">
-                                        <h6 class="mb-0">📈 Line F/B</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-container">
-                                            <canvas id="chartFB"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Line R/C -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card line-card rc">
-                                    <div class="card-header bg-danger text-white">
-                                        <h6 class="mb-0">📈 Line R/C</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-container">
-                                            <canvas id="chartRC"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Line R/B -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card line-card rb">
-                                    <div class="card-header" style="background-color: #6f42c1; color: white;">
-                                        <h6 class="mb-0">📈 Line R/B</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-container">
-                                            <canvas id="chartRB"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Line 3RD -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card line-card third">
-                                    <div class="card-header" style="background-color: #fd7e14; color: white;">
-                                        <h6 class="mb-0">📈 Line 3RD</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-container">
-                                            <canvas id="chart3RD"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Line Sub -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card line-card sub">
-                                    <div class="card-header" style="background-color: #20c997; color: white;">
-                                        <h6 class="mb-0">📈 Line Sub Assy</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-container">
-                                            <canvas id="chartSUB"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> <!-- End of Charts Row -->
-
-                        <!-- Summary Statistics -->
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header bg-info text-white">
-                                        <h6 class="mb-0">📋 สรุปผลรวม</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row text-center">
-                                            <div class="col-md-2">
-                                                <div class="border rounded p-3">
-                                                    <h5 class="text-success" id="totalFC">0</h5>
-                                                    <small>F/C ชิ้น</small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="border rounded p-3">
-                                                    <h5 class="text-warning" id="totalFB">0</h5>
-                                                    <small>F/B ชิ้น</small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="border rounded p-3">
-                                                    <h5 class="text-danger" id="totalRC">0</h5>
-                                                    <small>R/C ชิ้น</small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="border rounded p-3">
-                                                    <h5 style="color: #6f42c1;" id="totalRB">0</h5>
-                                                    <small>R/B ชิ้น</small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="border rounded p-3">
-                                                    <h5 style="color: #fd7e14;" id="total3RD">0</h5>
-                                                    <small>3RD ชิ้น</small>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="border rounded p-3">
-                                                    <h5 style="color: #20c997;" id="totalSUB">0</h5>
-                                                    <small>Sub ชิ้น</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>  <!-- End of Summary Statistics -->
-                       
-                    </div>
-                </div> <!-- End of Report Card -->
-            </div> <!-- End of Report -->
+            
 
         </div> <!-- End of Tab Content -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Global variables
-        let charts = {};
-        let currentData = {};
-        let updateInterval;
-
-        // API Configuration
-        const API_BASE = 'api/get_report_data.php';
-        
-        // Chart colors configuration
-        const CHART_COLORS = {
-            fc: '#28a745',
-            fb: '#ffc107', 
-            rc: '#dc3545',
-            rb: '#6f42c1',
-            third: '#fd7e14',
-            sub: '#20c997'
-        };
-
-        // Line names in Thai
-        const LINE_NAMES = {
-            fc: 'F/C ชิ้น',
-            fb: 'F/B ชิ้น',
-            rc: 'R/C ชิ้น', 
-            rb: 'R/B ชิ้น',
-            third: '3RD ชิ้น',
-            sub: 'Sub ชิ้น'
-        };
-
-        // Set default dates to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('report_date_start').value = today;
-        document.getElementById('report_date_end').value = today;
-
-        // API Functions
-        async function fetchReportData(type = 'hourly') {
-            const startDate = document.getElementById('report_date_start').value;
-            const endDate = document.getElementById('report_date_end').value;
-            
-            try {
-                showLoading(true);
-                hideError();
-                
-                const response = await fetch(`${API_BASE}?type=${type}&start_date=${startDate}&end_date=${endDate}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.message || 'Unknown error occurred');
-                }
-                
-                return result.data;
-                
-            } catch (error) {
-                console.error('API Error:', error);
-                showError(error.message);
-                throw error;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // UI Helper Functions
-        function showLoading(show = true) {
-            const loadingState = document.getElementById('loadingState');
-            const spinner = document.getElementById('loadingSpinner');
-            
-            if (show) {
-                loadingState.classList.remove('d-none');
-                spinner.classList.remove('d-none');
-            } else {
-                loadingState.classList.add('d-none');
-                spinner.classList.add('d-none');
-            }
-        }
-
-        function showError(message) {
-            const errorState = document.getElementById('errorState');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            errorMessage.textContent = message;
-            errorState.classList.remove('d-none');
-        }
-
-        function hideError() {
-            const errorState = document.getElementById('errorState');
-            errorState.classList.add('d-none');
-        }
-
-        // Chart configuration
-        const chartConfig = {
-            type: 'bar',
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 10
-                        }
-                    }
-                }
-            }
-        };
-
-        // Create charts
-        function createChart(canvasId, data, color, label) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            charts[canvasId] = new Chart(ctx, {
-                ...chartConfig,
-                data: {
-                    labels: currentData.labels || [],
-                    datasets: [{
-                        label: label,
-                        data: data || [],
-                        backgroundColor: color + '80',
-                        borderColor: color,
-                        borderWidth: 2,
-                        borderRadius: 4
-                    }]
-                }
+        // Autocomplete for ng-part and ng-detail
+        $(function () {
+            $("#model-detail").autocomplete({
+                source: "ajax/get_model.php",
+                minLength: 1
             });
-        }
 
-        // Initialize all charts
-        function initializeCharts() {
-            Object.keys(CHART_COLORS).forEach(line => {
-                const canvasId = line === 'third' ? 'chart3RD' : `chart${line.toUpperCase()}`;
-                createChart(canvasId, [], CHART_COLORS[line], LINE_NAMES[line]);
+            $("#color-detail").autocomplete({
+                source: "ajax/get_color.php",
+                minLength: 1
             });
-        }
+        });
 
-        // Update charts with new data
-        function updateCharts(data) {
-            currentData = data;
-            
-            Object.keys(CHART_COLORS).forEach(line => {
-                const canvasId = line === 'third' ? 'chart3RD' : `chart${line.toUpperCase()}`;
-                const chart = charts[canvasId];
-                
-                if (chart && data[line]) {
-                    chart.data.labels = data.labels || [];
-                    chart.data.datasets[0].data = data[line] || [];
-                    chart.update('none'); // Animation disabled for better performance
-                }
-            });
+        // Function to add new lot row
+        function addLotRow() {
+        const container = document.getElementById('lot-container');
+        const entry = document.querySelector('.lot-entry');
+        const newEntry = entry.cloneNode(true); // คัดลอกโหนดทั้งหมด
+        // ล้างค่าที่กรอก
+        newEntry.querySelectorAll('input').forEach(input => input.value = '');
+        container.appendChild(newEntry);
         }
-
-        // Update summary totals
-        async function updateSummary() {
-            try {
-                const summaryData = await fetchReportData('summary');
-                
-                Object.keys(summaryData).forEach(line => {
-                    const elementId = line === 'third' ? 'total3RD' : `total${line.toUpperCase()}`;
-                    const element = document.getElementById(elementId);
-                    
-                    if (element && summaryData[line]) {
-                        element.textContent = summaryData[line].total_qty || 0;
-                        
-                        // Add animation effect
-                        element.style.transform = 'scale(1.1)';
-                        setTimeout(() => {
-                            element.style.transform = 'scale(1)';
-                        }, 200);
-                    }
+        // Autocomplete for model-detail in lot entry
+        $(document).on('focus', '.model-detail', function () {
+            if (!$(this).hasClass("ui-autocomplete-input")) {
+                $(this).autocomplete({
+                    source: "ajax/get_model.php",
+                    minLength: 1
                 });
-                
-            } catch (error) {
-                console.error('Error updating summary:', error);
             }
-        }
-
-        // Load and display report data
-        async function loadReportData() {
-            try {
-                // Load hourly data for charts
-                const hourlyData = await fetchReportData('hourly');
-                updateCharts(hourlyData);
-                
-                // Load summary data
-                await updateSummary();
-                
-                console.log('Report data loaded successfully');
-                
-            } catch (error) {
-                console.error('Error loading report data:', error);
+        });
+        // Autocomplete for model-detail in lot entry
+        $(document).on('focus', '.color-detail', function () {
+            if (!$(this).hasClass("ui-autocomplete-input")) {
+                $(this).autocomplete({
+                    source: "ajax/get_color.php",
+                    minLength: 1
+                });
             }
-        }
-
-        // Real-time update function
-        function startRealTimeUpdate() {
-            const checkbox = document.getElementById('realTimeUpdate');
-            
-            if (checkbox.checked) {
-                updateInterval = setInterval(async () => {
-                    await loadReportData();
-                    console.log('Real-time update completed');
-                }, 30000); // Update every 30 seconds
-            } else {
-                if (updateInterval) {
-                    clearInterval(updateInterval);
-                }
-            }
-        }
-
-        // Event Listeners
-        document.getElementById('btnFilter').addEventListener('click', async function() {
-            await loadReportData();
         });
 
-        document.getElementById('btnExport').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const startDate = document.getElementById('report_date_start').value;
-            const endDate = document.getElementById('report_date_end').value;
-            
-            // Open export URL in new window
-            const exportUrl = `api/export_excel.php?start_date=${startDate}&end_date=${endDate}`;
-            window.open(exportUrl, '_blank');
-        });
-
-        document.getElementById('realTimeUpdate').addEventListener('change', function() {
-            startRealTimeUpdate();
-        });
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Initialize empty charts first
-            initializeCharts();
-            
-            // Load initial data
-            await loadReportData();
-            
-            // Start real-time updates if enabled
-            startRealTimeUpdate();
-            
-            console.log('Sewing report system initialized');
-        });
     </script>
-    
 </body>
 </html>

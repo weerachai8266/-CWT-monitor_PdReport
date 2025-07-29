@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $man_sub_act = $_POST['sub_act'];
 
     // อัปเดตข้อมูล
-    $stmt = $conn->prepare("UPDATE sewing_aman SET
+    $stmt = $conn->prepare("UPDATE sewing_man_act SET
         shift = ?,
         thour = ?,
         fc_act = ?,
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         rc_act = ?,
         rb_act = ?,
         3rd_act = ?,
-        subass_act = ?
+        sub_act = ?
         WHERE id = ?");
         
     $stmt->execute([

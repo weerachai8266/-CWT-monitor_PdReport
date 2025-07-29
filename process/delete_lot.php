@@ -6,7 +6,7 @@ include(__DIR__ . "/../connect.php");
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $id = $_POST['id'];
 
-    $stmt = $conn->prepare("DELETE FROM sewing_man_act WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM sewing_lot WHERE id = ?");
     $stmt->execute([$id]);
 
     echo "<script>alert('🗑️ ลบข้อมูลเรียบร้อยแล้ว'); location.href='../index.php';</script>";
