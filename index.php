@@ -358,11 +358,12 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                     📦 Lot Management
                     </div>
                     <div class="card-body">
+                        <br>
                         <form method="post" action="process/add_lot.php">
                             <div id="lot-container" class="row g-3">
-                                <div class="row lot-entry">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Lot Number</label>
+                                <div class="row lot-entry align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Batch number</label>
                                         <input type="text" name="lot_number[]" class="form-control" required>
                                     </div>
                                     <div class="col-md-4">
@@ -372,6 +373,9 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                     <div class="col-md-4">
                                         <label class="form-label">Color</label>
                                         <input type="text" name="lot_color[]" class="form-control color-detail" autocomplete="off" required>
+                                    </div>
+                                    <div class="col-md-1 text-end">
+                                        <button type="button" class="btn btn-danger btn-remove-row">❌</button>
                                     </div>
                                 </div>
                             </div>
@@ -390,9 +394,10 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                             <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-blue-100">
                                     <tr>
-                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Batch number</th>
-                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Model</th>
-                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tr-lg">EDIT</th>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 tracking-wider">Batch</th>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 tracking-wider">Model</th>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 tracking-wider">Color</th>
+                                        <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 tracking-wider rounded-tr-lg">EDIT</th>
                                     </tr>
                                 </thead>
 
@@ -406,6 +411,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['lot']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['model']) ?></td>
+                                    <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= htmlspecialchars($row['color']) ?></td>
                                     <td class="px-6 py-2 whitespace-nowrap text-center text-sm font-medium">
                                         <!-- ปุ่มแก้ไข -->
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['id'] ?>">✏️</button>
@@ -641,15 +647,31 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
             });
         });
 
-        // Function to add new lot row
+        // เพิ่มแถวใหม่ในแบบฟอร์ม lot
         function addLotRow() {
-        const container = document.getElementById('lot-container');
-        const entry = document.querySelector('.lot-entry');
-        const newEntry = entry.cloneNode(true); // คัดลอกโหนดทั้งหมด
-        // ล้างค่าที่กรอก
-        newEntry.querySelectorAll('input').forEach(input => input.value = '');
-        container.appendChild(newEntry);
+            const container = document.getElementById('lot-container');
+            const entry = document.querySelector('.lot-entry');
+            const newEntry = entry.cloneNode(true);
+
+            // เคลียร์ค่ากรอก
+            newEntry.querySelectorAll('input').forEach(input => input.value = '');
+
+            // เพิ่มแถวใหม่
+            container.appendChild(newEntry);
         }
+
+        // ลบแถวเมื่อกดปุ่ม ❌
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('btn-remove-row')) {
+                const entries = document.querySelectorAll('.lot-entry');
+                if (entries.length > 1) {
+                    e.target.closest('.lot-entry').remove();
+                } else {
+                    alert("ต้องมีอย่างน้อย 1 รายการ");
+                }
+            }
+        });
+
         // Autocomplete for model-detail in lot entry
         $(document).on('focus', '.model-detail', function () {
             if (!$(this).hasClass("ui-autocomplete-input")) {
