@@ -124,9 +124,9 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="man-tab" data-bs-toggle="tab" data-bs-target="#man" type="button" role="tab">Man Power</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <!-- <li class="nav-item" role="presentation">
                     <button class="nav-link" id="lot-tab" data-bs-toggle="tab" data-bs-target="#lot" type="button" role="tab">Lot</button>
-                </li>
+                </li> -->
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab">Target</button>
                 </li>
