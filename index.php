@@ -269,7 +269,7 @@ include 'connect.php'; // เชื่อมต่อฐานข้อมูล
                                                         <div class="col">
                                                             <label class="form-label">shift</label>
                                                             <select name="shift" class="form-select mb-2" required>
-                                                                <option value="<?= $row['shift'] ?>" disabled selected><?= $row['shift'] ?></option>
+                                                                <option value="<?= $row['shift'] ?>" selected><?= $row['shift'] ?></option>
                                                                 <option value="เช้า">เช้า</option>
                                                                 <option value="บ่าย">บ่าย</option>
                                                                 <option value="OT">OT</option>
